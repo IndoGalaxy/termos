@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,81 +93,85 @@
         outputElement.appendChild(newOutput);
 
         if (response !== undefined) {
-            response.then(info => {
+            if (response.startsWith('image:')) {
+                // If the response starts with 'image:', treat it as an ASCII art image
+                var imageText = response.substring(6);
+                var imageOutput = document.createElement('pre');
+                imageOutput.textContent = imageText;
+                outputElement.appendChild(imageOutput);
+            } else {
                 var responseOutput = document.createElement('p');
-                responseOutput.innerHTML = info;
+                responseOutput.textContent = response;
                 outputElement.appendChild(responseOutput);
-                outputElement.scrollTop = outputElement.scrollHeight;
-            });
+            }
         }
+
+        outputElement.scrollTop = outputElement.scrollHeight;
 
         // Set focus back to input after command is submitted
         focusInput();
     }
 
     function executeCommand(command) {
-        // Check if the command is "check device"
-        if (command.toLowerCase() === 'check device') {
-            var info = 'Device: ' + navigator.userAgent;
-            return Promise.resolve(info);
-        }
-
-        // Check if the command is "check location"
-        if (command.toLowerCase() === 'check location') {
-            return getLocation();
-        }
-
-        // Check if the command is "color"
+        // Check if the command is a color change command
         if (command.toLowerCase().startsWith('color ')) {
             var color = command.substring(6).trim().toLowerCase();
-            document.getElementById('terminal').style.color = color;
-            document.getElementById('input').style.color = color;
-            return Promise.resolve('Text color changed to ' + color);
-        }
-
-        // Temporarily, you can customize this function to handle different commands
-        switch (command.toLowerCase()) {
-            case 'hello':
-                return Promise.resolve('Hello! How can I help you?');
-            case 'date':
-                return Promise.resolve(new Date().toLocaleDateString());
-            case 'time':
-                return Promise.resolve(new Date().toLocaleTimeString());
-            default:
-                return Promise.resolve('Command not recognized.');
-        }
-    }
-
-    function getLocation() {
-        return new Promise((resolve, reject) => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        var lat = position.coords.latitude;
-                        var lon = position.coords.longitude;
-                        var apiKey = 'YOUR_API_KEY'; // Replace with your OpenCage Geocoding API key
-                        var apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`;
-
-                        fetch(apiUrl)
-                            .then(response => response.json())
-                            .then(data => {
-                                var country = data.results[0].components.country;
-                                var city = data.results[0].components.city;
-                                var info = `Country: ${country}<br>City: ${city}`;
-                                resolve(info);
-                            })
-                            .catch(error => {
-                                reject('Unable to fetch location information.');
-                            });
-                    },
-                    error => {
-                        reject('Unable to fetch location information.');
-                    }
-                );
+            
+            // Mapping warna ke nilai RGB yang lebih terang atau menyala
+            var brightColors = {
+                'white': '#ffffff',
+                'black': '#ffffff',
+                'red': '#ff7777',
+                'green': '#77ff77',
+                'blue': '#7777ff',
+                'yellow': '#ffff77',
+                'purple': '#ff77ff',
+                'orange': '#ffa500',
+                'pink': '#ffb6c1'
+            };
+            
+            if (brightColors.hasOwnProperty(color)) {
+                var brightColor = brightColors[color];
+                document.getElementById('terminal').style.color = brightColor;
+                document.getElementById('input').style.color = brightColor;
+                return 'Text color changed to ' + brightColor;
             } else {
-                reject('Geolocation is not supported by your browser.');
+                return 'Invalid color. Please use one of the following: white, black, red, green, blue, yellow, purple, orange, pink';
             }
-        });
+        }
+
+        // Check if the command is "check device"
+        if (command.toLowerCase() === 'check device') {
+            var deviceInfo = navigator.userAgent;
+            return 'Device Information:\n' + deviceInfo;
+        }
+
+        // Check if the command is "hello"
+        if (command.toLowerCase() === 'hello') {
+            // ASCII art of a bear
+            return 'image: \n' +
+                '    _____________________________\n' +
+                '   /                            /  \n' +
+                '  / Hello! How can I help you? /  \n' +
+                ' /____________________________/  \n' +
+                ' \\    \n' +
+                '  \\    \n' +
+                '   \\  \n' +
+                '   _    \n' +
+                '  / \\__\n' +
+                ' (    @\\___\n' +
+                ' /         O\n' +
+                '/   (_____/\n';
+        }
+
+        switch (command.toLowerCase()) {
+            case 'date':
+                return new Date().toLocaleDateString();
+            case 'time':
+                return new Date().toLocaleTimeString();
+            default:
+                return 'Command not recognized.';
+        }
     }
 </script>
 
