@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Terminal</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: black;
+            color: lime;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #terminal {
+            width: 100%;
+            height: 100%;
+            border: 2px solid lime;
+            overflow: hidden;
+            position: relative;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #output {
+            overflow-y: scroll;
+            height: calc(100% - 20px);
+        }
+
+        #input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #input {
+            width: calc(100% - 80px);
+            border: none;
+            background-color: black;
+            color: lime;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        #submit {
+            width: 80px;
+            height: 35px;
+            margin-left: 10px;
+            background-color: lime;
+            color: black;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="terminal" onclick="focusInput()">
+    <div id="output"></div>
+    <div id="input-container">
+        <span id="prompt">&gt; </span>
+        <input type="text" id="input" placeholder="Enter command..." onkeydown="handleInput(event)">
+        <button id="submit" onclick="submitCommand()">Submit</button>
+    </div>
+</div>
+
+<script>
+    function focusInput() {
+        document.getElementById('input').focus();
+    }
+
+    function handleInput(event) {
+        if (event.key === 'Enter') {
+            submitCommand();
+            event.preventDefault();
+        }
+    }
+
+    function submitCommand() {
+        var inputElement = document.getElementById('input');
+        var command = inputElement.value;
+        inputElement.value = '';
+
+        var outputElement = document.getElementById('output');
+        var response = executeCommand(command);
+
+        var newOutput = document.createElement('p');
+        newOutput.textContent = '> ' + command;
+        outputElement.appendChild(newOutput);
+
+        if (response !== undefined) {
+            response.then(info => {
+                var responseOutput = document.createElement('p');
+                responseOutput.innerHTML = info;
+                outputElement.appendChild(responseOutput);
+                outputElement.scrollTop = outputElement.scrollHeight;
+            });
+        }
+
+        // Set focus back to input after command is submitted
+        focusInput();
+    }
+
+    function executeCommand(command) {
+        // Check if the command is "check device"
+        if (command.toLowerCase() === 'check device') {
+            var info = 'Device: ' + navigator.userAgent;
+            return Promise.resolve(info);
+        }
+
+        // Check if the command is "check location"
+        if (command.toLowerCase() === 'check location') {
+            return getLocation();
+        }
+
+        // Check if the command is "color"
+        if (command.toLowerCase().startsWith('color ')) {
+            var color = command.substring(6).trim().toLowerCase();
+            document.getElementById('terminal').style.color = color;
+            document.getElementById('input').style.color = color;
+            return Promise.resolve('Text color changed to ' + color);
+        }
+
+        // Temporarily, you can customize this function to handle different commands
+        switch (command.toLowerCase()) {
+            case 'hello':
+                return Promise.resolve('Hello! How can I help you?');
+            case 'date':
+                return Promise.resolve(new Date().toLocaleDateString());
+            case 'time':
+                return Promise.resolve(new Date().toLocaleTimeString());
+            default:
+                return Promise.resolve('Command not recognized.');
+        }
+    }
+
+    function getLocation() {
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        var lat = position.coords.latitude;
+                        var lon = position.coords.longitude;
+                        var apiKey = 'YOUR_API_KEY'; // Replace with your OpenCage Geocoding API key
+                        var apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`;
+
+                        fetch(apiUrl)
+                            .then(response => response.json())
+                            .then(data => {
+                                var country = data.results[0].components.country;
+                                var city = data.results[0].components.city;
+                                var info = `Country: ${country}<br>City: ${city}`;
+                                resolve(info);
+                            })
+                            .catch(error => {
+                                reject('Unable to fetch location information.');
+                            });
+                    },
+                    error => {
+                        reject('Unable to fetch location information.');
+                    }
+                );
+            } else {
+                reject('Geolocation is not supported by your browser.');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
