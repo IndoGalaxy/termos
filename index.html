@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacker Terminal with Snowfall</title>
+    <title>Hacker Terminal</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -15,7 +15,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden; /* Hide the scrollbar */
+            transition: background-color 0.5s;
         }
 
         #terminal {
@@ -62,55 +62,10 @@
             color: lime;
             transition: background-color 0.5s;
         }
-
-        .snow, .snow:before, .snow:after {
-            position: absolute;
-            top: -650px;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-image: 
-              radial-gradient(4px 4px at 100px 50px, #fff , transparent), 
-              radial-gradient(6px 6px at 200px 150px, #fff, transparent), 
-              radial-gradient(3px 3px at 300px 250px, #fff 50%, transparent), 
-              radial-gradient(4px 4px at 400px 350px, #fff 50%, transparent), 
-              radial-gradient(6px 6px at 500px 100px, #fff 50%, transparent), 
-              radial-gradient(3px 3px at 50px 200px, #fff 50%, transparent), 
-              radial-gradient(4px 4px at 150px 300px, #fff 50%, transparent), 
-              radial-gradient(6px 6px at 250px 400px, #fff 50%, transparent), 
-              radial-gradient(3px 3px at 350px 500px, #fff 50%, transparent);
-            background-size: 650px 650px;
-            animation: snow 3s linear infinite;
-            content: "";
-        }
-
-        .snow:after {
-            margin-left: -250px;
-            opacity: 0.5;
-            filter: blur(2px);
-            animation-duration: 6s;
-            animation-direction: reverse;
-        }
-
-        .snow:before {
-            margin-left: -350px;
-            opacity: 0.7;
-            filter: blur(1px);
-            animation-duration: 9s;
-            animation-direction: reverse;
-        }
-
-        @keyframes snow {
-            to {
-                transform: translateY(650px);
-            }
-        }
     </style>
 </head>
 
 <body>
-
-    <div class="snow"></div>
 
     <div id="terminal" onclick="focusInput()">
         <div id="output"></div>
@@ -144,15 +99,15 @@
             newOutput.textContent = '> ' + command;
             outputElement.appendChild(newOutput);
 
-            if (command.toLowerCase() === 'hacker mode') {
-                toggleHackerMode();
-            } else if (command.toLowerCase() === 'hacking') {
+            // Check if the command is "cmd hacking" and scroll to the bottom with smooth scrolling
+            if (command.toLowerCase() === 'hacking') {
                 simulateCmdHacking();
             } else {
                 var response = executeCommand(command);
 
                 if (response !== undefined) {
                     if (response.startsWith('image:')) {
+                        // If the response starts with 'image:', treat it as an ASCII art image
                         var imageText = response.substring(6);
                         var imageOutput = document.createElement('pre');
                         imageOutput.textContent = imageText;
@@ -165,15 +120,19 @@
                 }
             }
 
+            // Set focus back to input after the command is submitted
             focusInput();
         }
 
         function executeCommand(command) {
+            // Convert the command to lowercase for case-insensitive comparison
             var lowerCaseCommand = command.toLowerCase();
 
+            // Check if the command is a color change command
             if (lowerCaseCommand.startsWith('color ')) {
                 var color = command.substring(6).trim().toLowerCase();
 
+                // Mapping colors to brighter or vibrant RGB values
                 var brightColors = {
                     'white': '#ffffff',
                     'black': '#ffffff',
@@ -196,12 +155,15 @@
                 }
             }
 
+            // Check if the command is "check device"
             if (lowerCaseCommand === 'check device') {
                 var deviceInfo = navigator.userAgent;
                 return 'Device Information:\n' + deviceInfo;
             }
 
+            // Check if the command is "hello"
             if (lowerCaseCommand === 'hello') {
+                // ASCII art of a bear
                 return 'image: \n' +
                     '    _____________________________\n' +
                     '   /                            /  \n' +
@@ -215,6 +177,12 @@
                     ' (    @\\___\n' +
                     ' /         O\n' +
                     '/   (_____/\n';
+            }
+
+            // Check if the command is "hacker mode"
+            if (lowerCaseCommand === 'hacker mode') {
+                toggleHackerMode();
+                return 'Hacker mode activated!';
             }
 
             switch (lowerCaseCommand) {
@@ -242,11 +210,12 @@
                     hackingText += 'Line ' + (index + 1) + ': ' + generateRandomText() + '\n';
                     outputElement.innerHTML = hackingText;
 
+                    // Scroll to the bottom with smooth scrolling
                     outputElement.scrollTop = outputElement.scrollHeight;
 
                     setTimeout(function () {
                         addLine(index + 1);
-                    }, 10);
+                    }, 10); // Adjust the delay between lines (in milliseconds)
                 } else {
                     hackingText += '\nDate: ' + new Date().toLocaleDateString() + '\n';
                     hackingText += 'Time: ' + new Date().toLocaleTimeString() + '\n';
