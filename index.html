@@ -100,7 +100,7 @@
             outputElement.appendChild(newOutput);
 
             // Check if the command is "cmd hacking" and scroll to the bottom with smooth scrolling
-            if (command.toLowerCase() === 'cmd hacking') {
+            if (command.toLowerCase() === 'hacking') {
                 simulateCmdHacking();
             } else {
                 var response = executeCommand(command);
@@ -183,12 +183,6 @@
             if (lowerCaseCommand === 'hacker mode') {
                 toggleHackerMode();
                 return 'Hacker mode activated!';
-            }
-
-            // Check if the command is "cmd hacking"
-            if (lowerCaseCommand === 'hacking') {
-                simulateCmdHacking();
-                return '';  // No specific response for this command
             }
 
             switch (lowerCaseCommand) {
