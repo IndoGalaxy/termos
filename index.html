@@ -1,10 +1,10 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>This is Termos</title>
+    <title>Hacker Terminal</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -15,6 +15,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
+            transition: background-color 0.5s;
         }
 
         #terminal {
@@ -55,125 +56,194 @@
             border: none;
             cursor: pointer;
         }
+
+        .hacker-mode {
+            background-color: #000080; /* Navy Blue */
+            color: lime;
+            transition: background-color 0.5s;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="terminal" onclick="focusInput()">
-    <div id="output"></div>
-    <div id="input-container">
-        <span id="prompt">&gt; </span>
-        <input type="text" id="input" placeholder="Enter command..." onkeydown="handleInput(event)">
-        <button id="submit" onclick="submitCommand()">Submit</button>
+    <div id="terminal" onclick="focusInput()">
+        <div id="output"></div>
+        <div id="input-container">
+            <span id="prompt">&gt; </span>
+            <input type="text" id="input" placeholder="Enter command..." onkeydown="handleInput(event)">
+            <button id="submit" onclick="submitCommand()">Submit</button>
+        </div>
     </div>
-</div>
 
-<script>
-    function focusInput() {
-        document.getElementById('input').focus();
-    }
-
-    function handleInput(event) {
-        if (event.key === 'Enter') {
-            submitCommand();
-            event.preventDefault();
+    <script>
+        function focusInput() {
+            document.getElementById('input').focus();
         }
-    }
 
-    function submitCommand() {
-        var inputElement = document.getElementById('input');
-        var command = inputElement.value;
-        inputElement.value = '';
-
-        var outputElement = document.getElementById('output');
-        var response = executeCommand(command);
-
-        var newOutput = document.createElement('p');
-        newOutput.textContent = '> ' + command;
-        outputElement.appendChild(newOutput);
-
-        if (response !== undefined) {
-            if (response.startsWith('image:')) {
-                // If the response starts with 'image:', treat it as an ASCII art image
-                var imageText = response.substring(6);
-                var imageOutput = document.createElement('pre');
-                imageOutput.textContent = imageText;
-                outputElement.appendChild(imageOutput);
-            } else {
-                var responseOutput = document.createElement('p');
-                responseOutput.textContent = response;
-                outputElement.appendChild(responseOutput);
+        function handleInput(event) {
+            if (event.key === 'Enter') {
+                submitCommand();
+                event.preventDefault();
             }
         }
 
-        outputElement.scrollTop = outputElement.scrollHeight;
+        function submitCommand() {
+            var inputElement = document.getElementById('input');
+            var command = inputElement.value;
+            inputElement.value = '';
 
-        // Set focus back to input after command is submitted
-        focusInput();
-    }
+            var outputElement = document.getElementById('output');
 
-    function executeCommand(command) {
-        // Check if the command is a color change command
-        if (command.toLowerCase().startsWith('color ')) {
-            var color = command.substring(6).trim().toLowerCase();
-            
-            // Mapping warna ke nilai RGB yang lebih terang atau menyala
-            var brightColors = {
-                'white': '#ffffff',
-                'black': '#ffffff',
-                'red': '#ff7777',
-                'green': '#77ff77',
-                'blue': '#7777ff',
-                'yellow': '#ffff77',
-                'purple': '#ff77ff',
-                'orange': '#ffa500',
-                'pink': '#ffb6c1'
-            };
-            
-            if (brightColors.hasOwnProperty(color)) {
-                var brightColor = brightColors[color];
-                document.getElementById('terminal').style.color = brightColor;
-                document.getElementById('input').style.color = brightColor;
-                return 'Text color changed to ' + brightColor;
+            var newOutput = document.createElement('p');
+            newOutput.textContent = '> ' + command;
+            outputElement.appendChild(newOutput);
+
+            // Check if the command is "cmd hacking" and scroll to the bottom with smooth scrolling
+            if (command.toLowerCase() === 'cmd hacking') {
+                simulateCmdHacking();
             } else {
-                return 'Invalid color. Please use one of the following: white, black, red, green, blue, yellow, purple, orange, pink';
+                var response = executeCommand(command);
+
+                if (response !== undefined) {
+                    if (response.startsWith('image:')) {
+                        // If the response starts with 'image:', treat it as an ASCII art image
+                        var imageText = response.substring(6);
+                        var imageOutput = document.createElement('pre');
+                        imageOutput.textContent = imageText;
+                        outputElement.appendChild(imageOutput);
+                    } else {
+                        var responseOutput = document.createElement('p');
+                        responseOutput.textContent = response;
+                        outputElement.appendChild(responseOutput);
+                    }
+                }
+            }
+
+            // Set focus back to input after the command is submitted
+            focusInput();
+        }
+
+        function executeCommand(command) {
+            // Convert the command to lowercase for case-insensitive comparison
+            var lowerCaseCommand = command.toLowerCase();
+
+            // Check if the command is a color change command
+            if (lowerCaseCommand.startsWith('color ')) {
+                var color = command.substring(6).trim().toLowerCase();
+
+                // Mapping colors to brighter or vibrant RGB values
+                var brightColors = {
+                    'white': '#ffffff',
+                    'black': '#ffffff',
+                    'red': '#ff7777',
+                    'green': '#77ff77',
+                    'blue': '#7777ff',
+                    'yellow': '#ffff77',
+                    'purple': '#ff77ff',
+                    'orange': '#ffa500',
+                    'pink': '#ffb6c1'
+                };
+
+                if (brightColors.hasOwnProperty(color)) {
+                    var brightColor = brightColors[color];
+                    document.getElementById('terminal').style.color = brightColor;
+                    document.getElementById('input').style.color = brightColor;
+                    return 'Text color changed to ' + brightColor;
+                } else {
+                    return 'Invalid color. Please use one of the following: white, black, red, green, blue, yellow, purple, orange, pink';
+                }
+            }
+
+            // Check if the command is "check device"
+            if (lowerCaseCommand === 'check device') {
+                var deviceInfo = navigator.userAgent;
+                return 'Device Information:\n' + deviceInfo;
+            }
+
+            // Check if the command is "hello"
+            if (lowerCaseCommand === 'hello') {
+                // ASCII art of a bear
+                return 'image: \n' +
+                    '    _____________________________\n' +
+                    '   /                            /  \n' +
+                    '  / Hello! How can I help you? /  \n' +
+                    ' /____________________________/  \n' +
+                    ' \\    \n' +
+                    '  \\    \n' +
+                    '   \\  \n' +
+                    '   _    \n' +
+                    '  / \\__\n' +
+                    ' (    @\\___\n' +
+                    ' /         O\n' +
+                    '/   (_____/\n';
+            }
+
+            // Check if the command is "hacker mode"
+            if (lowerCaseCommand === 'hacker mode') {
+                toggleHackerMode();
+                return 'Hacker mode activated!';
+            }
+
+            // Check if the command is "cmd hacking"
+            if (lowerCaseCommand === 'hacking') {
+                simulateCmdHacking();
+                return '';  // No specific response for this command
+            }
+
+            switch (lowerCaseCommand) {
+                case 'date':
+                    return 'Date: ' + new Date().toLocaleDateString();
+                case 'time':
+                    return 'Time: ' + new Date().toLocaleTimeString();
+                default:
+                    return 'Command not recognized.';
             }
         }
 
-        // Check if the command is "check device"
-        if (command.toLowerCase() === 'check device') {
-            var deviceInfo = navigator.userAgent;
-            return 'Device Information:\n' + deviceInfo;
+        function toggleHackerMode() {
+            var bodyElement = document.body;
+            bodyElement.classList.toggle('hacker-mode');
         }
 
-        // Check if the command is "hello"
-        if (command.toLowerCase() === 'hello') {
-            // ASCII art of a bear
-            return 'image: \n' +
-                '    _____________________________\n' +
-                '   /                            /  \n' +
-                '  / Hello! How can I help you? /  \n' +
-                ' /____________________________/  \n' +
-                ' \\    \n' +
-                '  \\    \n' +
-                '   \\  \n' +
-                '   _    \n' +
-                '  / \\__\n' +
-                ' (    @\\___\n' +
-                ' /         O\n' +
-                '/   (_____/\n';
+        function simulateCmdHacking() {
+            var outputElement = document.getElementById('output');
+            var hackingText = 'Executing CMD Hacking...\n\n';
+            var lines = 1000;
+
+            function addLine(index) {
+                if (index < lines) {
+                    hackingText += 'Line ' + (index + 1) + ': ' + generateRandomText() + '\n';
+                    outputElement.innerHTML = hackingText;
+
+                    // Scroll to the bottom with smooth scrolling
+                    outputElement.scrollTop = outputElement.scrollHeight;
+
+                    setTimeout(function () {
+                        addLine(index + 1);
+                    }, 10); // Adjust the delay between lines (in milliseconds)
+                } else {
+                    hackingText += '\nDate: ' + new Date().toLocaleDateString() + '\n';
+                    hackingText += 'Time: ' + new Date().toLocaleTimeString() + '\n';
+                    outputElement.innerHTML = hackingText;
+                }
+            }
+
+            addLine(0);
         }
 
-        switch (command.toLowerCase()) {
-            case 'date':
-                return new Date().toLocaleDateString();
-            case 'time':
-                return new Date().toLocaleTimeString();
-            default:
-                return 'Command not recognized.';
+        function generateRandomText() {
+            var characters = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/';
+            var text = '';
+
+            for (var i = 0; i < 50; i++) {
+                text += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+
+            return text;
         }
-    }
-</script>
+    </script>
 
 </body>
+
 </html>
