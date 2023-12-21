@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="lime">
-
     <title>Hacker Terminal</title>
     <style>
         body {
@@ -64,6 +62,47 @@
             color: lime;
             transition: background-color 0.5s;
         }
+        
+        .snowflake {
+      position: fixed;
+      color: #fff;
+      font-size: 5px;
+      line-height: 1;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh);
+      }
+      100% {
+        transform: translateY(100vh);
+      }
+    }
+
+    .ball {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      border-radius: 50%;
+      animation: bounce linear infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-30px);
+      }
+      60% {
+        transform: translateY(-15px);
+      }
+    }
     </style>
 </head>
 
@@ -174,11 +213,26 @@
                     ' \\    \n' +
                     '  \\    \n' +
                     '   \\  \n' +
-                    '   _    \n' +
-                    '  / \\__\n' +
-                    ' (    @\\___\n' +
-                    ' /         O\n' +
-                    '/   (_____/\n';
+                    '            ,i!!!!!!;,\n' +
+                    '       .,;i!!!!!‘`,uu,o$$bo.\n' +
+                    '      !!!!!!!‘.e$$$$$$$$$$$$$$.\n' +
+                    '     !!!!!!! $$$$$$$$$$$$$$$$$P\n' +
+                    '     !!!!!!!,`$$$$$$$$P""`,,`"\n' +
+                    '    i!!!!!!!!,$$$$",oed$$$$$$\n' +
+                    '   !!!!!!!!!‘P".,e$$$$$$$$"‘?\n' +
+                    '   `!!!!!!!! z$‘J$$$$$‘.,$bd$b,\n' +
+                    '    `!!!!!!f;$‘d$$$$$$$$$$$$$P‘,c,.\n' +
+                    '     !!!!!! $B,"?$$$$$P‘,uggg$$$$$P"\n' +
+                    '     !!!!!!.$$$$be."‘zd$$$P".,uooe$$r\n' +
+                    '     `!!!‘,$$$$$$$$$c,"",ud$$$$$$$$$L\n' +
+                    '       !! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n' +
+                    '        !‘j$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n' +
+                    '      d@@,?$$$$$$$$$$$$$$$$$$$$$$$$$$$$P\n' +
+                    '      ?@@f:$$$$$$$$$$$$$$$$$$$$$$$$$$$‘\n' +
+                    '        ""`$$$$$$$$$$$$$$$$$$$$$$$$$$F\n' +
+                    '          `3$$$$$$$$$$$$$$$$$$$$$$F`\n' +
+                    '             `"$$$$$P?$$$$$$$"`\n' +
+                    '                       `""\n';
             }
 
             // Check if the command is "hacker mode"
@@ -238,8 +292,21 @@
 
             return text;
         }
+        // Create snowflakes
+    for (let i = 0; i < 100; i++) {
+      createSnowflake();
+    }
+
+    // Create a random snowflake
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snowflake';
+      snowflake.innerHTML = '❄';
+      snowflake.style.left = Math.random() * window.innerWidth + 'px';
+      snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+      document.body.appendChild(snowflake);
+    }
     </script>
 
 </body>
-
 </html>
